@@ -1,0 +1,29 @@
+import axios from 'axios'
+
+// Create an axios instance
+const api = axios.create({
+  baseURL: 'http://localhost:9200/api',
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+})
+
+// Register user function
+export const registerUser = (formData) => {
+  return api.post('users/register', formData);
+}
+
+// Example: Login user
+export const loginUser = (data) => {
+  return api.post('users/login', data);
+}
+
+export const createPost = (data) => {
+    return api.post("posts/create", data);
+}
+
+export const getAllPost = () =>{
+  return api.get("/posts");
+}
+
+export default api
