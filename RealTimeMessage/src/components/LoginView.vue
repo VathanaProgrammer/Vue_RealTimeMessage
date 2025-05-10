@@ -46,7 +46,7 @@
   
   // Create an axios instance for JSON requests
 const apiJson = axios.create({
-  baseURL: 'http://localhost:9200/api',
+  baseURL: 'http://192.168.18.61:9200/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -61,10 +61,12 @@ const submitLogin = async () => {
     const response = await apiJson.post('/users/login', loginData)  // POST request to login
         // Save user data to localStorage after successful registration
         localStorage.setItem('user', JSON.stringify({
+      id: response.data.id,
       username: response.data.username,
       profileImage: response.data.profileImage, // Assuming profile image is part of the response
     }));
     setUser({
+  id: response.data.id,
   username: response.data.username,
   profileImage: response.data.profileImage,
 })

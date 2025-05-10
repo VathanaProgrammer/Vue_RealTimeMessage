@@ -8,7 +8,7 @@
       <!-- User Info -->
       <div class="flex items-center mb-4">
         <img
-          :src="'http://localhost:9200' + post.user.profileImage"
+          :src="'http://192.168.18.61:9200' + post.user.profileImage"
           class="w-10 h-10 rounded-full object-cover"
           alt="User profile image"
         />
@@ -25,7 +25,7 @@
         <img
           v-for="(img, index) in post.images"
           :key="index"
-          :src="'http://localhost:9200' + img.url"
+          :src="'http://192.168.18.61:9200' + img.url"
           class="w-full h-48 object-cover rounded-lg"
           alt="Post image"
         />
@@ -44,6 +44,7 @@ const getAllPosts = async () => {
   try {
     const response = await getAllPost()
     posts.value = response.data
+    console.log(posts.value)
   } catch (err) {
     console.log(err)
   }

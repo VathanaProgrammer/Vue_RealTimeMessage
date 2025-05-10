@@ -39,12 +39,13 @@ import { ref } from "vue";
 import { createPost } from "@/axios";
 const des = ref('')
 const images = ref([])
-const userId = ref(1);
-
+let userId = ref()
+const storeUser = JSON.parse(localStorage.getItem("user"));
+userId.value = storeUser.id;
+console.log( "poster id : ",userId.value)
 const handleFileChange = (event) => {
   const selectedFiles = Array.from(event.target.files);
   images.value.push(...selectedFiles); // append new files
-  console.log(images)
 };
 
 
