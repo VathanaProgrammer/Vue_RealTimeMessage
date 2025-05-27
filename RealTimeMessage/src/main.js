@@ -5,12 +5,13 @@ import './assets/main.css';
 // Font Awesome core
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faComment } from '@fortawesome/free-solid-svg-icons' // The message icon
 
 // Import specific icons you need
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
 // Add icons to the library
-library.add(faXmark);
+library.add(faXmark, faComment);
 
 
 const app = createApp(App)

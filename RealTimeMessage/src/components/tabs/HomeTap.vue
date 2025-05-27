@@ -8,7 +8,7 @@
       <!-- User Info -->
       <div class="flex items-center mb-4">
         <img
-          :src="'http://192.168.18.61:9200' + post.user.profileImage"
+          :src="APT_BASE_URL + post.user.profileImage"
           class="w-10 h-10 rounded-full object-cover"
           alt="User profile image"
         />
@@ -25,7 +25,7 @@
         <img
           v-for="(img, index) in post.images"
           :key="index"
-          :src="'http://192.168.18.61:9200' + img.url"
+          :src="APT_BASE_URL + img.url"
           class="w-full h-48 object-cover rounded-lg"
           alt="Post image"
         />
@@ -38,6 +38,7 @@
 import { onMounted, ref } from 'vue'
 import { getAllPost } from '@/axios'
 
+const APT_BASE_URL = 'http://localhost:9200';
 const posts = ref([])
 
 const getAllPosts = async () => {

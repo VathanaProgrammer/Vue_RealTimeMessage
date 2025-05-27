@@ -25,12 +25,15 @@
           />
         </div>
 
-        <button
+        <div class="w-full flex justify-between items-center">
+                  <button
           type="submit"
-          class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition text-lg"
+          class=" bg-blue-600 text-white py-2 px-5 font-bold rounded hover:bg-blue-700 transition text-lg"
         >
           Login
         </button>
+        <RouterLink to="/register" class=" text-blue-700 text-lg hover:border-b-2 border-blue-600 p-0 outline-none cursor-pointer">Don't have an account?</RouterLink>
+        </div>
       </form>
     </div>
   </template>
@@ -46,7 +49,7 @@
   
   // Create an axios instance for JSON requests
 const apiJson = axios.create({
-  baseURL: 'http://192.168.18.61:9200/api',
+  baseURL: 'http://localhost:9200/api',
   headers: {
     'Content-Type': 'application/json',
   },

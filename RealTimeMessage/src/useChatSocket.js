@@ -3,7 +3,7 @@ export function useChatSocket(onMessage) {
 
   const connect = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    const url = `http://192.168.18.61:9200/api/sse/${user.username}`;
+    const url = `http://localhost:9200/api/sse/${user.username}`;
     console.log('🔌 Connecting to SSE:', url);
 
     eventSource = new EventSource(url);
@@ -27,7 +27,7 @@ export function useChatSocket(onMessage) {
 
   const sendMessage = async (msg) => {
     console.log('📤 Sending message:', msg);
-    await fetch('http://192.168.18.61:9200/api/chat', {
+    await fetch('http://localhost:9200/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(msg),

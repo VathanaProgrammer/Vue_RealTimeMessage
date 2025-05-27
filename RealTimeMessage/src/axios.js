@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create an axios instance
 const api = axios.create({
-  baseURL: 'http://192.168.18.61:9200/api',
+  baseURL: 'http://localhost:9200/api', //172.20.10.2 // 192.168.18.61
   headers: {
     'Content-Type': 'multipart/form-data',
   },

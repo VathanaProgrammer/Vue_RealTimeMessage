@@ -13,7 +13,7 @@
           <div class="flex flex-col items-center p-6">
             <img
               class="w-24 h-24 mb-4 rounded-full shadow-lg"
-              :src="'http://192.168.18.61:9200' + user.profileImage"
+              :src="APT_BASE_URL + user.profileImage"
               :alt="user.username"
             />
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -36,7 +36,7 @@
           <div class="flex flex-col items-center p-6">
             <img
               class="w-24 h-24 mb-4 rounded-full shadow-lg"
-              :src="'http://192.168.18.61:9200' + user.profileImage"
+              :src="APT_BASE_URL+ user.profileImage"
               :alt="user.username"
             />
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -66,7 +66,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getFriendsOfUser, getNoFriendOfUser, sendFriendRequest } from "@/axios";
-
+const APT_BASE_URL = 'http://localhost:9200';
 const currentUser = JSON.parse(localStorage.getItem("user"));
 const currentUserId = currentUser?.id;
 

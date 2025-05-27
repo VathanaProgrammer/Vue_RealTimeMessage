@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between mb-3">
       <div class="flex items-center space-x-3">
         <img
-          :src="'http://192.168.18.61:9200' + friend.profileImage"
+          :src="APT_BASE_URL + friend.profileImage"
           alt="profile"
           class="rounded-full object-cover h-10 w-10 border-2"
         />
@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick  } from 'vue';
-
+const APT_BASE_URL = 'http://localhost:9200';
 
 nextTick(() => {
   const container = document.querySelector('.messages');
@@ -70,7 +70,7 @@ let eventSource = null;
 
 const connect = () => {
   const username = currentUser.username;
-  eventSource = new EventSource(`http://192.168.18.61:9200/api/chat/stream/${username}`);
+  eventSource = new EventSource(`${APT_BASE_URL}/api/chat/stream/${username}`);
 
 eventSource.onmessage = (event) => {
   try {
@@ -102,7 +102,7 @@ eventSource.onmessage = (event) => {
 
 const sendMessage = async (msg) => {
   try {
-    const res = await fetch('http://192.168.18.61:9200/api/chat/sendToUser', {
+    const res = await fetch(APT_BASE_URL + '/api/chat/sendToUser', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(msg),

@@ -1,5 +1,6 @@
 <template>
-  <div class="sticky top-0">
+  <div
+  :class="isSmallScreen ? 'absolute top-15 right-0 w-80 bg-white border rounded shadow-lg p-4' : 'sticky top-0'">
     <h2 class="text-xl text-black font-bold mb-4">Messages</h2>
     
     <!-- Show the list of friends when no conversation is open -->
@@ -11,7 +12,7 @@
         @click="selectConversation(user)"
       >
         <img
-          :src="'http://192.168.18.61:9200' + user.profileImage"
+          :src="APT_BASE_URL + user.profileImage"
           alt="profile"
           class="rounded-full object-cover h-10 w-10 border-2"
         />
@@ -29,15 +30,17 @@
 </template>
 
 <script setup>
+
 import { ref, onMounted } from 'vue'
 import { getFriendsOfUser } from '@/axios'
 import MessageConversation from '../MessageConversation.vue'
-
+const APT_BASE_URL = 'http://localhost:9200';
 const friends = ref([])
 
 const currentUser = JSON.parse(localStorage.getItem("user"))
 const currentUserId = currentUser?.id
 const selectedFriend = ref(null)
+const isSmallScreen = ref( window.innerWidth < 1200);
 
 const fetchFriends = async (userId) => {
   try {
@@ -60,5 +63,8 @@ onMounted(() => {
   if (currentUserId) {
     fetchFriends(currentUserId)
   }
+  window.addEventListener('resize', () => {
+    isSmallScreen.value = window.innerWidth < 1200
+  })
 })
 </script>
