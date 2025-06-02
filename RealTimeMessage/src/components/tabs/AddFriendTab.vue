@@ -1,6 +1,5 @@
 <template>
   <div class="w-full max-w-screen-lg mx-auto p-4 space-y-12">
-
     <!-- Friends Section -->
     <section v-if="friendUsers.length">
       <h2 class="text-2xl font-bold text-black mb-6">Your Friends</h2>
@@ -36,7 +35,7 @@
           <div class="flex flex-col items-center p-6">
             <img
               class="w-24 h-24 mb-4 rounded-full shadow-lg"
-              :src="APT_BASE_URL+ user.profileImage"
+              :src="APT_BASE_URL + user.profileImage"
               :alt="user.username"
             />
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -59,53 +58,51 @@
         </div>
       </div>
     </section>
-
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { getFriendsOfUser, getNoFriendOfUser, sendFriendRequest } from "@/axios";
-const APT_BASE_URL = 'http://localhost:9200';
-const currentUser = JSON.parse(localStorage.getItem("user"));
-const currentUserId = currentUser?.id;
+import { ref, onMounted } from "vue"
+import { getCurrentUser, getFriendsOfUser, getNoFriendOfUser, sendFriendRequest } from "@/axios"
 
-const friendUsers = ref([]);
-const otherUsers = ref([]);
+const APT_BASE_URL = "http://localhost:9200"
+const friendUsers = ref([])
+const otherUsers = ref([])
+const currentUserId = ref(null)
 
-const getUserFriends_API = async (userId) => {
+const loadFriends = async () => {
   try {
-    const response = await getFriendsOfUser(userId);
-    friendUsers.value = response.data;
+    const [friendsRes, nonFriendsRes] = await Promise.all([
+      getFriendsOfUser(),        // backend should detect user by cookie
+      getNoFriendOfUser()        // same — get list of not-friends
+    ])
+    friendUsers.value = friendsRes.data
+    otherUsers.value = nonFriendsRes.data
   } catch (err) {
-    console.error("Error while fetching friends:", err);
+    console.error("Failed to fetch friends/non-friends", err)
   }
-};
-
-const getNotFriendOfUser_API = async (userId) => {
-  try {
-    const response = await getNoFriendOfUser(userId);
-    otherUsers.value = response.data;
-  } catch (err) {
-    console.error("Error while fetching non-friends:", err);
-  }
-};
+}
 
 const handleAddFriend = async (receiverId) => {
   try {
-    await sendFriendRequest(currentUserId, receiverId);
-    alert("Friend request sent!");
-    await getUserFriends_API(currentUserId);     // Refresh list
-    await getNotFriendOfUser_API(currentUserId); // Refresh list
+    await sendFriendRequest(receiverId)   // only send receiverId, backend knows who is sender
+    alert("Friend request sent!")
+    await loadFriends()                   // Refresh both lists
   } catch (err) {
-    console.error("Failed to send request:", err);
-    alert("Failed to send request.");
+    console.error("Failed to send request:", err)
+    alert("Failed to send request.")
   }
-};
+}
 
-onMounted(() => {
-  getUserFriends_API(currentUserId);
-  getNotFriendOfUser_API(currentUserId);
-});
-
+// When component loads, get current user info and then fetch friends
+onMounted(async () => {
+  try {
+    const res = await getCurrentUser()
+    currentUserId.value = res.data.id     // for local use if needed
+    await loadFriends()
+  } catch (err) {
+    console.error("User not logged in or failed to get profile:", err)
+  }
+})
 </script>
+

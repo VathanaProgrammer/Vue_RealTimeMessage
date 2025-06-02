@@ -45,7 +45,7 @@ const getAllPosts = async () => {
   try {
     const response = await getAllPost()
     posts.value = response.data
-    console.log(posts.value)
+    console.log("post info: " ,posts.value)
   } catch (err) {
     console.log(err)
   }

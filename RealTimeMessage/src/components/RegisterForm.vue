@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/2 mx-auto mt-10 p-6 bg-white">
+  <div class="w-2/2 md:w-1/2 mx-auto mt-10 p-6 bg-white">
     <h2 class="text-2xl font-bold mb-6 text-center text-gray-900">Register a new account</h2>
     <form @submit.prevent="submitForm" class="space-y-4">
       <div>
@@ -10,7 +10,7 @@
           id="username"
           required
           placeholder="Enter your name"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
+          class="w-full border text-gray-800 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
         />
       </div>
       <div>
@@ -21,7 +21,7 @@
           id="email"
           required
           placeholder="Enter your email"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
+          class="w-full border text-gray-800 border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
         />
       </div>
       <div>
@@ -32,7 +32,7 @@
           id="password"
           required
           placeholder="Enter your password"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
+          class="w-full text-gray-800 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
         />
       </div>
 
@@ -44,6 +44,7 @@
       v-on:change="handleFileChange"
       class="w-full border h-full border-gray-300 rounded-lg px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50"
     />
+    <span v-if="errorMessage" class="text-red-600 text-sm mt-1 block">{{ errorMessage }}</span>
   </div>
 
 
@@ -60,6 +61,7 @@
 <script setup>
 import { ref } from 'vue'
 import { registerUser } from '@/axios'
+import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -67,6 +69,8 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const image = ref(null)
+const errorMessage = ref('')
+const userStore = useUserStore()
 
 const handleFileChange = (event) => {
   image.value = event.target.files[0]
@@ -84,14 +88,19 @@ const submitForm = async () => {
     const response = await registerUser(formData)
     // console.log('User registered:', response.data)  // Check what response.data contains
     // console.log('Profile image URL:', response.data.profileImage)  // Ensure the image URL is correct
-        // Save user data to localStorage after successful registration
-        localStorage.setItem('user', JSON.stringify({
-      username: response.data.username,
-      profileImage: response.data.profileImage, // Assuming profile image is part of the response
-    }));
+    userStore.setUser(response.data.data)
+    
     router.push('/')
   } catch (err) {
-    console.error('Registration error:', err)
+    // 6️⃣ Axios throws for any status >= 300
+    //    err.response.data should be { success:false, message:"Email is already in use" }
+    if (err.response && err.response.status === 409) {
+      // Email conflict
+      errorMessage.value = err.response.data?.message || 'Email conflict'
+    } else {
+      // Other errors
+      errorMessage.value = err.response?.data?.message || 'Registration failed'
+    }
   }
 }
 

@@ -1,12 +1,17 @@
-// src/stores/userStore.js
-import { ref } from 'vue'
+// stores/userStore.js
+import { defineStore } from 'pinia'
 
-export const user = ref(null)
-
-export const setUser = (userData) => {
-  user.value = userData
-}
-
-export const clearUser = () => {
-  user.value = null
-}
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    user: null,     // Will hold the currently logged‐in user object (including profileImage)
+  }),
+  actions: {
+    setUser(data) {
+      this.user = data
+    },
+    clearUser() {
+      this.user = null
+    }
+  },
+  persist: true,     // so it survives page refresh
+})

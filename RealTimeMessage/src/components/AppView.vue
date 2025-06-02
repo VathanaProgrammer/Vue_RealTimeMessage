@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen">
     <!-- Left Side: Scrollable content -->
-    <div :class="{'w-full': isSmallScreen, 'w-3/4': !isSmallScreen}" class="flex flex-col overflow-y-auto">
+    <div :class="{'w-full': isSmallScreen, 'w-4/6': !isSmallScreen}" class="flex flex-col overflow-y-auto">
       <div class="p-4 border-b flex space-x-6">
         <button @click="activeTab = 'home'" :class="tabClass('home')">Home</button>
         <button @click="activeTab = 'addFriend'" :class="tabClass('addFriend')">Friend</button>
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Right Side: Fixed messages (only visible on large screens) -->
-    <div v-show="!isSmallScreen" class="w-1/4 p-4 h-screen border-l bg-white">
+    <div v-show="!isSmallScreen" class="w-2/6 p-4 h-screen border-l bg-white">
       <div class="sticky top-0">
         <MessageTab />
       </div>

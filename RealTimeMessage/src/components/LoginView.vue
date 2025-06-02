@@ -1,86 +1,87 @@
 <template>
-    <div class="w-1/2 mx-auto mt-10 p-6 bg-white">
-      <h2 class="text-2xl font-bold mb-6 text-center text-gray-900">Login your account</h2>
-      <form @submit.prevent="submitLogin" class="space-y-4">
-        <div>
-          <label for="email" class="block mb-1 font-medium text-gray-700 text-lg">Email</label>
-          <input
-            type="email"
-            v-model="email"
-            id="email"
-            required
-            placeholder="Enter your email"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
-          />
-        </div>
-        <div>
-          <label for="password" class="block mb-1 font-medium text-gray-700 text-lg">Password</label>
-          <input
-            type="password"
-            v-model="password"
-            id="password"
-            required
-            placeholder="Enter your password"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 placeholder-gray-400"
-          />
-        </div>
+  <div class="w-2/2 md:w-1/2 mx-auto mt-10 p-6 bg-white">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-900">Login your account</h2>
+    <form @submit.prevent="submitLogin" class="space-y-4">
+      <div>
+        <label for="email" class="block mb-1 font-medium text-gray-700 text-lg">Email</label>
+        <input
+          type="email"
+          v-model="email"
+          id="email"
+          required
+          placeholder="Enter your email"
+          class="w-full border border-gray-300 rounded-lg text-black  px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
+        />
+      </div>
+      <div>
+        <label for="password" class="block mb-1 font-medium text-gray-700 text-lg">Password</label>
+        <input
+          type="password"
+          v-model="password"
+          id="password"
+          required
+          placeholder="Enter your password"
+          class="w-full border border-gray-300 rounded text-black px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
+        />
+        <span v-if="errorMessage" class="text-red-600 text-sm mt-1 block">{{ errorMessage }}</span>
+      </div>
 
-        <div class="w-full flex justify-between items-center">
-                  <button
+      <div class="w-full flex justify-between items-center">
+        <button
           type="submit"
-          class=" bg-blue-600 text-white py-2 px-5 font-bold rounded hover:bg-blue-700 transition text-lg"
+          class="bg-blue-600 text-white py-2 px-5 font-bold rounded hover:bg-blue-700 transition text-lg"
         >
           Login
         </button>
-        <RouterLink to="/register" class=" text-blue-700 text-lg hover:border-b-2 border-blue-600 p-0 outline-none cursor-pointer">Don't have an account?</RouterLink>
-        </div>
-      </form>
-    </div>
-  </template>
-  
-  <script setup>
-  import axios from 'axios'
-  import { ref } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { setUser } from '@/stores/userStore';
-  const router = useRouter()
-  const email = ref('')
-  const password = ref('')
-  
-  // Create an axios instance for JSON requests
-const apiJson = axios.create({
+        <RouterLink to="/register" class="text-blue-700 text-sm  md:text-lg hover:border-b-2 border-blue-600 p-0 outline-none cursor-pointer">
+          Don't have an account?
+        </RouterLink>
+      </div>
+    </form>
+  </div>
+</template>
+
+
+<script setup>
+import axios from 'axios'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
+
+const userStoer = useUserStore();
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('');
+
+
+const api = axios.create({
   baseURL: 'http://localhost:9200/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  withCredentials: true,   // send cookie
 })
 
-const submitLogin = async () => {
-  const loginData = {
-    email: email.value,   // Send email instead of username
-    password: password.value,  // Send password as usual
-  }
+async function submitLogin() {
   try {
-    const response = await apiJson.post('/users/login', loginData)  // POST request to login
-        // Save user data to localStorage after successful registration
-        localStorage.setItem('user', JSON.stringify({
-      id: response.data.id,
-      username: response.data.username,
-      profileImage: response.data.profileImage, // Assuming profile image is part of the response
-    }));
-    setUser({
-  id: response.data.id,
-  username: response.data.username,
-  profileImage: response.data.profileImage,
-})
-    console.log(response.data)
-    router.push('/')  // Redirect to home or another page
+    // 1️⃣ Authenticate — sets HttpOnly cookie
+    await api.post('/auth/login', {
+      email: email.value,
+      password: password.value
+    });
+
+    // 2️⃣ Fetch user from cookie
+    const res = await api.get('/users/me');
+    if (res.data.success) {
+      userStoer.setUser(res.data.data)
+      router.push('/');
+    } else {
+      // unlikely, but handle gracefully
+      alert(res.data.message);
+    }
   } catch (err) {
-    console.error('Login error:', err.response ? err.response.data : err)
+    // err.response.data is an ApiResponse on 401 or 500
+   const msg = err.response?.data?.message || 'Login failed';
+  errorMessage.value = msg;
   }
 }
 
-
-  
-  </script>
-  
+</script>
