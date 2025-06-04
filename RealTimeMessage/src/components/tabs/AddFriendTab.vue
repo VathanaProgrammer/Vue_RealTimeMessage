@@ -1,5 +1,19 @@
 <template>
   <div class="w-full max-w-screen-lg mx-auto p-4 space-y-12">
+    <!-- Show this if user is NOT logged in -->
+    <section v-if="!isLogin">
+      <div class="flex flex-col items-center justify-center py-16 text-center bg-yellow-100 border border-yellow-300 rounded-xl">
+        <h2 class="text-2xl font-bold text-yellow-800 mb-4">You're not logged in</h2>
+        <p class="text-gray-700 mb-6">Please log in to send friend requests and view your friend list.</p>
+        <router-link
+          to="/Talkify/login"
+          class="px-5 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+        >
+          Go to Login
+        </router-link>
+      </div>
+    </section>
+
     <!-- Friends Section -->
     <section v-if="friendUsers.length">
       <h2 class="text-2xl font-bold text-black mb-6">Your Friends</h2>
@@ -64,8 +78,10 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import { getCurrentUser, getFriendsOfUser, getNoFriendOfUser, sendFriendRequest } from "@/axios"
+import API_BASE_URL from "@/api"
+import { isLogin } from "@/authState";
 
-const APT_BASE_URL = "http://localhost:9200"
+const APT_BASE_URL = API_BASE_URL;
 const friendUsers = ref([])
 const otherUsers = ref([])
 const currentUserId = ref(null)
@@ -73,8 +89,8 @@ const currentUserId = ref(null)
 const loadFriends = async () => {
   try {
     const [friendsRes, nonFriendsRes] = await Promise.all([
-      getFriendsOfUser(),        // backend should detect user by cookie
-      getNoFriendOfUser()        // same — get list of not-friends
+      getFriendsOfUser(),
+      getNoFriendOfUser()
     ])
     friendUsers.value = friendsRes.data
     otherUsers.value = nonFriendsRes.data
@@ -84,25 +100,33 @@ const loadFriends = async () => {
 }
 
 const handleAddFriend = async (receiverId) => {
+  if (!isLogin.value) {
+    alert("You must log in first to send a friend request.")
+    return
+  }
+
   try {
-    await sendFriendRequest(receiverId)   // only send receiverId, backend knows who is sender
+    await sendFriendRequest(receiverId)
     alert("Friend request sent!")
-    await loadFriends()                   // Refresh both lists
+    await loadFriends()
   } catch (err) {
     console.error("Failed to send request:", err)
     alert("Failed to send request.")
   }
 }
 
-// When component loads, get current user info and then fetch friends
 onMounted(async () => {
-  try {
+  if(isLogin.value){
+    try {
     const res = await getCurrentUser()
-    currentUserId.value = res.data.id     // for local use if needed
+    currentUserId.value = res.data.id
+    isLogin.value = true               // 🔥 set to true if logged in
     await loadFriends()
   } catch (err) {
-    console.error("User not logged in or failed to get profile:", err)
+    console.warn("User not logged in:", err)
+    isLogin.value = false              // 🔥 explicitly false
+    await loadFriends()                // still show all users
+  }
   }
 })
 </script>
-

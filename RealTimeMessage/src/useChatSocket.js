@@ -16,10 +16,10 @@ export function useChatSocket(onMessage) {
   const isConnected = ref(false)
 
   function connect() {
-    console.log('🔌 [useChatSocket] → Attempting STOMP connect to ws://localhost:9200/chat …')
+    console.log('🔌 [useChatSocket] → Attempting STOMP connect to ws://172.20.10.2:9200/chat …')
     stompClient = new Client({
       // 1) Point directly at your backend STOMP endpoint:
-      brokerURL: 'ws://localhost:9200/chat',
+      brokerURL: 'ws://172.20.10.2:9200/chat',
 
       // 2) Auto-reconnect after 5 seconds if the socket drops:
       reconnectDelay: 5000,

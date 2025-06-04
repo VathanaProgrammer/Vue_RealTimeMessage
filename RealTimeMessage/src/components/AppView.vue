@@ -6,7 +6,7 @@
         <button @click="activeTab = 'home'" :class="tabClass('home')">Home</button>
         <button @click="activeTab = 'addFriend'" :class="tabClass('addFriend')">Friend</button>
       </div>
-      <div class="p-4 flex-1 overflow-y-auto">
+      <div class="lg:p-4 flex-1 overflow-y-auto">
         <component :is="currentComponent" />
       </div>
     </div>

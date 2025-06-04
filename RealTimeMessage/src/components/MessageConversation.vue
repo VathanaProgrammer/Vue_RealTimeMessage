@@ -81,7 +81,7 @@
       v-if="!isConnected"
       class="text-center text-sm text-red-500 py-2 bg-red-50 border-t"
     >
-      🔌 Connecting to chat server…
+      🔌 Connecting…
     </div>
   </div>
 </template>
@@ -90,8 +90,8 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import axios from 'axios'
 import { useChatSocket } from '@/useChatSocket.js'
-
-const APT_BASE_URL = 'http://localhost:9200'
+import API_BASE_URL from '@/api'
+const APT_BASE_URL = API_BASE_URL;
 
 const props = defineProps({
   friend: {

@@ -42,8 +42,8 @@
 import { ref, onMounted } from "vue";
 import { getFriendsOfUser } from "@/axios";
 import MessageConversation from "../MessageConversation.vue";
-
-const APT_BASE_URL = "http://localhost:9200";
+import API_BASE_URL from "@/api";
+const APT_BASE_URL = API_BASE_URL;
 const friends = ref([]);
 
 const selectedFriend = ref(null);

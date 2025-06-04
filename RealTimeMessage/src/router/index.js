@@ -4,6 +4,7 @@ import AppView from '../components/AppView.vue';
 import App from '@/App.vue';
 import PostView from "../components/PostView.vue";
 import LoginView from '../components/LoginView.vue';
+import ProfileView from '../components/ProfileView.vue';
 const routes = [
   {
     path: '/register',
@@ -20,6 +21,10 @@ const routes = [
   {
     path: "/Talkify/login",
     component: LoginView
+  },
+  {
+    path: '/Talkify/profile',
+    component: ProfileView
   }
 ]
 

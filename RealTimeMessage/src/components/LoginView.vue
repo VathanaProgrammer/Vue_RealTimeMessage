@@ -47,16 +47,18 @@ import axios from 'axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
+import API_BASE_URL from '@/api';
 
+console.log("API_BASE_URL: ", API_BASE_URL);
 const userStoer = useUserStore();
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('');
 
-
+console.log("API_BASE_URL: ", API_BASE_URL + "/api");
 const api = axios.create({
-  baseURL: 'http://localhost:9200/api',
+  baseURL: API_BASE_URL + "/api",
   withCredentials: true,   // send cookie
 })
 

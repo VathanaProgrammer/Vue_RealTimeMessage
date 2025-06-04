@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
 import MessageTab from '@/components/tabs/MessageTab.vue'
+import { isLogin } from './authState' 
 
 const APT_BASE_URL = 'http://localhost:9200'
 const router = useRouter()
@@ -43,6 +44,7 @@ const api = axios.create({
 async function fetchCurrentUser() {
   try {
     const res = await api.get('/users/me')
+    console.log('Current user:', res.data)
     if (res.data.success) {
       // store entire user object, including .profileImage
       userStore.setUser(res.data.data)
@@ -59,6 +61,7 @@ async function fetchPendingRequests() {
   try {
     const res = await api.get('/friend-requests/pending')
     friendRequests.value = res.data
+    console.log('Pending requests:', friendRequests.value)
   } catch (err) {
     console.error('Failed to fetch pending requests:', err)
   }
@@ -96,6 +99,7 @@ async function logout() {
   try {
     await api.post('/auth/logout')
     userStore.clearUser()
+    isLogin.value = false
     router.push('/')
   } catch (err) {
     console.error('Logout failed:', err)
@@ -258,7 +262,7 @@ onUnmounted(() => {
                   class="px-4 py-2 text-lg font-semibold hover:bg-gray-100"
                 >Login</RouterLink>
                 <RouterLink 
-                  to="/settings" 
+                  to="/Talkify/profile" 
                   class="px-4 py-2 text-lg font-semibold hover:bg-gray-100"
                 >Settings</RouterLink>
                 <button 
@@ -273,8 +277,8 @@ onUnmounted(() => {
       </nav>
     </header>
 
-    <main class="container mx-auto mt-6 px-4">
-      <div v-if="showMessages" class="relative w-full">
+    <main class="container mx-auto mt-6 lg:px-4">
+      <div v-if="showMessages" class=" z-50 relative w-full">
         <MessageTab />
       </div>
       <RouterView />

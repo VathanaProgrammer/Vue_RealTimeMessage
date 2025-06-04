@@ -1,8 +1,8 @@
 import axios from 'axios'
-
+import API_BASE_URL from './api';
 // Create an axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:9200/api', //172.20.10.2 // 192.168.18.61
+  baseURL: API_BASE_URL+'/api', //172.20.10.2 // 192.168.18.61
   withCredentials: true, // Allow cookies to be sent with requests
   headers: {
     'Content-Type': 'multipart/form-data',
